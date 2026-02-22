@@ -2,7 +2,7 @@
   "$schema": "node_modules/wrangler/config-schema.json",
   // Must stay "moltbot-sandbox": Durable Object (Sandbox) is bound to this worker name.
   // To use "claw" as the public URL, add a custom domain in the dashboard.
-  "name": "moltbot-sandbox",
+  "name": "claw",
   "main": "src/index.ts",
   "compatibility_date": "2025-05-06",
   "compatibility_flags": ["nodejs_compat"],
