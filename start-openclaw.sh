@@ -221,6 +221,16 @@ if (process.env.CF_AI_GATEWAY_MODEL) {
     }
 }
 
+// OpenRouter: when OPENROUTER_API_KEY is set, ensure default model is an OpenRouter model.
+// Fixes restored configs (e.g. from R2) that still had another provider and produced empty chat replies.
+if (process.env.OPENROUTER_API_KEY && !process.env.CF_AI_GATEWAY_MODEL) {
+    const openrouterModel = process.env.OPENROUTER_DEFAULT_MODEL || 'openrouter/anthropic/claude-sonnet-4-5';
+    config.agents = config.agents || {};
+    config.agents.defaults = config.agents.defaults || {};
+    config.agents.defaults.model = { primary: openrouterModel };
+    console.log('OpenRouter default model set: ' + openrouterModel);
+}
+
 // Telegram configuration
 // Overwrite entire channel object to drop stale keys from old R2 backups
 // that would fail OpenClaw's strict config validation (see #47)

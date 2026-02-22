@@ -14,7 +14,7 @@
  * - ANTHROPIC_API_KEY: Your Anthropic API key
  *
  * Optional secrets:
- * - MOLTBOT_GATEWAY_TOKEN: Token to protect gateway access
+ * - MOLTBOT_GATEWAY_TOKEN: (optional) Token for Control UI; if unset, device pairing only
  * - TELEGRAM_BOT_TOKEN: Telegram bot token
  * - DISCORD_BOT_TOKEN: Discord bot token
  * - SLACK_BOT_TOKEN + SLACK_APP_TOKEN: Slack tokens
@@ -57,9 +57,7 @@ function validateRequiredEnv(env: MoltbotEnv): string[] {
   const missing: string[] = [];
   const isTestMode = env.DEV_MODE === 'true' || env.E2E_TEST_MODE === 'true';
 
-  if (!env.MOLTBOT_GATEWAY_TOKEN) {
-    missing.push('MOLTBOT_GATEWAY_TOKEN');
-  }
+  // MOLTBOT_GATEWAY_TOKEN is optional: if set, gateway uses token auth; if not, device pairing only.
 
   // CF Access vars not required in dev/test mode since auth is skipped
   if (!isTestMode) {
