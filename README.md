@@ -43,7 +43,7 @@ Notes:
 [OpenClaw](https://github.com/openclaw/openclaw) (formerly Moltbot, formerly Clawdbot) is a personal AI assistant with a gateway architecture that connects to multiple chat platforms. Key features:
 
 - **Control UI** - Web-based chat interface at the gateway
-- **Multi-channel support** - Telegram, Discord, Slack
+- **Multi-channel support** - Telegram, Discord, Slack, WhatsApp
 - **Device pairing** - Secure DM authentication requiring explicit approval
 - **Persistent conversations** - Chat history and context across sessions
 - **Agent runtime** - Extensible AI capabilities with workspace and skills
@@ -285,6 +285,17 @@ npx wrangler secret put SLACK_BOT_TOKEN
 npx wrangler secret put SLACK_APP_TOKEN
 npm run deploy
 ```
+
+### WhatsApp
+
+The WhatsApp channel uses WhatsApp Web (Linked Devices). No API token is needed.
+
+1. Open the admin UI at `/_admin/`.
+2. In the **WhatsApp** section, click **Link WhatsApp**.
+3. Wait for the QR code to appear (~30 seconds), then scan it with your phone: **WhatsApp → Settings → Linked devices → Link a device**.
+4. Click **Restart Gateway** on the same page so the gateway picks up the WhatsApp session.
+
+With R2 storage configured, the WhatsApp session is backed up with your config and persists across container restarts.
 
 ## Optional: Browser Automation (CDP)
 

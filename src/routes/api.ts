@@ -257,6 +257,30 @@ adminApi.post('/storage/sync', async (c) => {
   }
 });
 
+// POST /api/admin/whatsapp/start-login - Run WhatsApp QR login and return output (QR appears in terminal output)
+const WHATSAPP_LOGIN_WAIT_MS = 28000; // Wait for QR to appear in stdout/stderr
+adminApi.post('/whatsapp/start-login', async (c) => {
+  const sandbox = c.get('sandbox');
+
+  try {
+    const proc = await sandbox.startProcess('openclaw channels login --channel whatsapp');
+    await new Promise((r) => setTimeout(r, WHATSAPP_LOGIN_WAIT_MS));
+    const logs = await proc.getLogs();
+    const stdout = logs.stdout || '';
+    const stderr = logs.stderr || '';
+    const output = [stdout, stderr].filter(Boolean).join('\n');
+
+    return c.json({
+      success: true,
+      output,
+      hint: 'Scan the QR code above with WhatsApp (Linked Devices). After linking, restart the gateway from this page.',
+    });
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    return c.json({ success: false, error: errorMessage }, 500);
+  }
+});
+
 // POST /api/admin/gateway/restart - Kill the current gateway and start a new one
 adminApi.post('/gateway/restart', async (c) => {
   const sandbox = c.get('sandbox');

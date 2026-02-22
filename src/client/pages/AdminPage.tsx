@@ -6,6 +6,7 @@ import {
   restartGateway,
   getStorageStatus,
   triggerSync,
+  startWhatsAppLogin,
   AuthError,
   type PendingDevice,
   type PairedDevice,
@@ -54,6 +55,8 @@ export default function AdminPage() {
   const [actionInProgress, setActionInProgress] = useState<string | null>(null);
   const [restartInProgress, setRestartInProgress] = useState(false);
   const [syncInProgress, setSyncInProgress] = useState(false);
+  const [whatsappLoginOutput, setWhatsappLoginOutput] = useState<string | null>(null);
+  const [whatsappLoginInProgress, setWhatsappLoginInProgress] = useState(false);
 
   const fetchDevices = useCallback(async () => {
     try {
@@ -172,6 +175,25 @@ export default function AdminPage() {
     }
   };
 
+  const handleWhatsAppLogin = async () => {
+    setWhatsappLoginOutput(null);
+    setWhatsappLoginInProgress(true);
+    setError(null);
+    try {
+      const result = await startWhatsAppLogin();
+      if (result.success && result.output !== undefined) {
+        setWhatsappLoginOutput(result.output);
+        if (result.hint) setError(null);
+      } else {
+        setError(result.error || 'WhatsApp login failed');
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to start WhatsApp login');
+    } finally {
+      setWhatsappLoginInProgress(false);
+    }
+  };
+
   return (
     <div className="devices-page">
       {error && (
@@ -245,6 +267,33 @@ export default function AdminPage() {
           Restart the gateway to apply configuration changes or recover from errors. All connected
           clients will be temporarily disconnected.
         </p>
+      </section>
+
+      <section className="devices-section whatsapp-section">
+        <div className="section-header">
+          <h2>WhatsApp</h2>
+          <button
+            className="btn btn-primary"
+            onClick={handleWhatsAppLogin}
+            disabled={whatsappLoginInProgress}
+          >
+            {whatsappLoginInProgress && <ButtonSpinner />}
+            {whatsappLoginInProgress ? 'Generating QR...' : 'Link WhatsApp'}
+          </button>
+        </div>
+        <p className="hint">
+          Chat with OpenClaw from WhatsApp. Click &quot;Link WhatsApp&quot; to show a QR code, then scan it in
+          WhatsApp → Settings → Linked devices → Link a device. After linking, restart the gateway above.
+        </p>
+        {whatsappLoginOutput && (
+          <div className="whatsapp-qr-box">
+            <p className="whatsapp-qr-hint">Scan this QR code with your phone (WhatsApp → Linked devices):</p>
+            <pre className="whatsapp-qr-output">{whatsappLoginOutput}</pre>
+            <p className="whatsapp-qr-after">
+              After scanning, use &quot;Restart Gateway&quot; above so the gateway picks up the WhatsApp session.
+            </p>
+          </div>
+        )}
       </section>
 
       {loading ? (

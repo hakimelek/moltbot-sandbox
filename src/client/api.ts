@@ -137,3 +137,16 @@ export async function triggerSync(): Promise<SyncResponse> {
     method: 'POST',
   });
 }
+
+export interface WhatsAppLoginResponse {
+  success: boolean;
+  output?: string;
+  hint?: string;
+  error?: string;
+}
+
+export async function startWhatsAppLogin(): Promise<WhatsAppLoginResponse> {
+  return apiRequest<WhatsAppLoginResponse>('/whatsapp/start-login', {
+    method: 'POST',
+  });
+}
