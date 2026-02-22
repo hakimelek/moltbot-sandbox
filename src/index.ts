@@ -79,12 +79,13 @@ function validateRequiredEnv(env: MoltbotEnv): string[] {
     env.CF_AI_GATEWAY_GATEWAY_ID
   );
   const hasLegacyGateway = !!(env.AI_GATEWAY_API_KEY && env.AI_GATEWAY_BASE_URL);
+  const hasOpenRouterKey = !!env.OPENROUTER_API_KEY;
   const hasAnthropicKey = !!env.ANTHROPIC_API_KEY;
   const hasOpenAIKey = !!env.OPENAI_API_KEY;
 
-  if (!hasCloudflareGateway && !hasLegacyGateway && !hasAnthropicKey && !hasOpenAIKey) {
+  if (!hasCloudflareGateway && !hasLegacyGateway && !hasOpenRouterKey && !hasAnthropicKey && !hasOpenAIKey) {
     missing.push(
-      'ANTHROPIC_API_KEY, OPENAI_API_KEY, or CLOUDFLARE_AI_GATEWAY_API_KEY + CF_AI_GATEWAY_ACCOUNT_ID + CF_AI_GATEWAY_GATEWAY_ID',
+      'OPENROUTER_API_KEY, ANTHROPIC_API_KEY, OPENAI_API_KEY, or CLOUDFLARE_AI_GATEWAY_API_KEY + CF_AI_GATEWAY_ACCOUNT_ID + CF_AI_GATEWAY_GATEWAY_ID',
     );
   }
 
@@ -263,8 +264,13 @@ app.all('*', async (c) => {
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
 
     let hint = 'Check worker logs with: wrangler tail';
-    if (!c.env.ANTHROPIC_API_KEY) {
-      hint = 'ANTHROPIC_API_KEY is not set. Run: wrangler secret put ANTHROPIC_API_KEY';
+    const hasAnyAiKey =
+      !!(c.env.OPENROUTER_API_KEY || c.env.ANTHROPIC_API_KEY || c.env.OPENAI_API_KEY) ||
+      !!(c.env.CLOUDFLARE_AI_GATEWAY_API_KEY && c.env.CF_AI_GATEWAY_ACCOUNT_ID && c.env.CF_AI_GATEWAY_GATEWAY_ID) ||
+      !!(c.env.AI_GATEWAY_API_KEY && c.env.AI_GATEWAY_BASE_URL);
+    if (!hasAnyAiKey) {
+      hint =
+        'No AI provider key set. Run: wrangler secret put OPENROUTER_API_KEY (or ANTHROPIC_API_KEY / OPENAI_API_KEY)';
     } else if (errorMessage.includes('heap out of memory') || errorMessage.includes('OOM')) {
       hint = 'Gateway ran out of memory. Try again or check for memory leaks.';
     }

@@ -2,6 +2,7 @@
 # .dev.vars is gitignored and used by wrangler dev
 
 # AI Provider (at least one required)
+# OPENROUTER_API_KEY=sk-or-...   # OpenRouter – single key for many models
 ANTHROPIC_API_KEY=sk-ant-...
 # OPENAI_API_KEY=sk-...
 

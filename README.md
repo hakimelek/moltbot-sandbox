@@ -62,10 +62,10 @@ _Cloudflare Sandboxes are available on the [Workers Paid plan](https://dash.clou
 # Install dependencies
 npm install
 
-# Set your API key (direct Anthropic access)
-npx wrangler secret put ANTHROPIC_API_KEY
-
-# Or use Cloudflare AI Gateway instead (see "Optional: Cloudflare AI Gateway" below)
+# Set your API key (at least one required)
+npx wrangler secret put OPENROUTER_API_KEY   # OpenRouter – one key for many models (recommended)
+# Or: npx wrangler secret put ANTHROPIC_API_KEY
+# Or use Cloudflare AI Gateway (see "Optional: Cloudflare AI Gateway" below)
 # npx wrangler secret put CLOUDFLARE_AI_GATEWAY_API_KEY
 # npx wrangler secret put CF_AI_GATEWAY_ACCOUNT_ID
 # npx wrangler secret put CF_AI_GATEWAY_GATEWAY_ID
@@ -347,6 +347,18 @@ node /root/clawd/skills/cloudflare-browser/scripts/video.js "https://site1.com,h
 
 See `skills/cloudflare-browser/SKILL.md` for full documentation.
 
+## Optional: OpenRouter
+
+[OpenRouter](https://openrouter.ai) provides a single API key to use many models (Claude, GPT-4, Gemini, Llama, etc.) with one account. OpenClaw has native OpenRouter support.
+
+```bash
+npx wrangler secret put OPENROUTER_API_KEY
+# Paste your key from https://openrouter.ai/keys
+npm run deploy
+```
+
+Models are referenced as `openrouter/<provider>/<model>` (e.g. `openrouter/anthropic/claude-sonnet-4-5`). You can change the default model in the Control UI or in the OpenClaw config after onboarding.
+
 ## Optional: Cloudflare AI Gateway
 
 You can route API requests through [Cloudflare AI Gateway](https://developers.cloudflare.com/ai-gateway/) for caching, rate limiting, analytics, and cost tracking. OpenClaw has native support for Cloudflare AI Gateway as a first-class provider.
@@ -378,7 +390,7 @@ All three are required. OpenClaw constructs the gateway URL from the account ID 
 npm run deploy
 ```
 
-When Cloudflare AI Gateway is configured, it takes precedence over direct `ANTHROPIC_API_KEY` or `OPENAI_API_KEY`.
+When Cloudflare AI Gateway is configured, it takes precedence over `OPENROUTER_API_KEY`, `ANTHROPIC_API_KEY`, or `OPENAI_API_KEY`.
 
 ### Choosing a Model
 
@@ -416,7 +428,8 @@ The previous `AI_GATEWAY_API_KEY` + `AI_GATEWAY_BASE_URL` approach is still supp
 | `CF_AI_GATEWAY_ACCOUNT_ID` | Yes* | Your Cloudflare account ID (used to construct the gateway URL) |
 | `CF_AI_GATEWAY_GATEWAY_ID` | Yes* | Your AI Gateway ID (used to construct the gateway URL) |
 | `CF_AI_GATEWAY_MODEL` | No | Override default model: `provider/model-id` (e.g. `workers-ai/@cf/meta/llama-3.3-70b-instruct-fp8-fast`). See [Choosing a Model](#choosing-a-model) |
-| `ANTHROPIC_API_KEY` | Yes* | Direct Anthropic API key (alternative to AI Gateway) |
+| `OPENROUTER_API_KEY` | Yes* | [OpenRouter](https://openrouter.ai) API key – single key for many models (Claude, GPT-4, Gemini, etc.) |
+| `ANTHROPIC_API_KEY` | Yes* | Direct Anthropic API key (alternative to OpenRouter / AI Gateway) |
 | `ANTHROPIC_BASE_URL` | No | Direct Anthropic API base URL |
 | `OPENAI_API_KEY` | No | OpenAI API key (alternative provider) |
 | `AI_GATEWAY_API_KEY` | No | Legacy AI Gateway API key (deprecated, use `CLOUDFLARE_AI_GATEWAY_API_KEY` instead) |

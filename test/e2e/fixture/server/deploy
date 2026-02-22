@@ -92,6 +92,9 @@ if [ -n "$AI_GATEWAY_BASE_URL" ]; then
     echo "$AI_GATEWAY_BASE_URL" | npx wrangler secret put AI_GATEWAY_BASE_URL --name "$WORKER_NAME" >&2
 fi
 # Direct provider keys
+if [ -n "$OPENROUTER_API_KEY" ]; then
+    echo "$OPENROUTER_API_KEY" | npx wrangler secret put OPENROUTER_API_KEY --name "$WORKER_NAME" >&2
+fi
 if [ -n "$ANTHROPIC_API_KEY" ]; then
     echo "$ANTHROPIC_API_KEY" | npx wrangler secret put ANTHROPIC_API_KEY --name "$WORKER_NAME" >&2
 fi
