@@ -275,8 +275,8 @@ if (process.env.SLACK_BOT_TOKEN && process.env.SLACK_APP_TOKEN) {
 // WhatsApp (Web/Baileys): enable channel with pairing by default.
 // Link your account by running "Link WhatsApp" in the admin UI and scanning the QR code.
 // Session credentials are stored under CONFIG_DIR and synced to R2 when configured.
+// Note: OpenClaw does not use channels.whatsapp.enabled; the channel is enabled by presence of the key.
 config.channels.whatsapp = {
-    enabled: true,
     dmPolicy: 'pairing',
     groupPolicy: 'allowlist',
 };
