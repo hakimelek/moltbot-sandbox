@@ -54,6 +54,11 @@
       "new_sqlite_classes": ["Sandbox"],
       "tag": "v1",
     },
+    // Re-register Sandbox after DO was deleted from dashboard (code 10061 fix).
+    {
+      "new_sqlite_classes": ["Sandbox"],
+      "tag": "v2",
+    },
   ],
   // R2 bucket for persistent storage (moltbot data, conversations, etc.)
   "r2_buckets": [
